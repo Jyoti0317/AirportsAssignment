@@ -1,4 +1,4 @@
-package com.accenture.assesment.airport;
+package com.accenture.assessment.airport;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

@@ -1,22 +1,20 @@
-package com.accenture.assesment.airport.model;
+package com.accenture.assessment.airport.model;
 
 import com.opencsv.bean.CsvBindByName;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Country")
 public class Country {
     @Id
     @CsvBindByName
-    private Long id;
-
-    @Column
-    @CsvBindByName
     private String code;
+
+    @CsvBindByName
+    private Long id;
 
     @Column
     @CsvBindByName
@@ -33,6 +31,11 @@ public class Country {
     @Column
     @CsvBindByName
     private String keywords;
+
+    @OneToMany(cascade = CascadeType.ALL )
+    @JoinColumn(name = "iso_country")
+    private List<Airport> airports = new ArrayList<>();
+
 
     public Long getId() {
         return id;
@@ -81,4 +84,25 @@ public class Country {
     public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
+
+    public List<Airport> getAirports() {
+        return airports;
+    }
+
+    public void setAirports(List<Airport> airports) {
+        this.airports = airports;
+    }
+
+    /*@Override
+    public String toString() {
+        return "Country{" +
+                "code='" + code + '\'' +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", continent='" + continent + '\'' +
+                ", wikipediaLink='" + wikipediaLink + '\'' +
+                ", keywords='" + keywords + '\'' +
+                ", airports=" + airports +
+                '}';
+    }*/
 }

@@ -1,6 +1,6 @@
-package com.accenture.assesment.airport.repository;
+package com.accenture.assessment.airport.repository;
 
-import com.accenture.assesment.airport.model.Airport;
+import com.accenture.assessment.airport.model.Airport;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

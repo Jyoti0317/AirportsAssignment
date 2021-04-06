@@ -1,4 +1,4 @@
-package com.accenture.assesment.airport;
+package com.accenture.assessment.airport;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

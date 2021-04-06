@@ -1,4 +1,4 @@
-package com.accenture.assesment.airport.model;
+package com.accenture.assessment.airport.model;
 
 import com.opencsv.bean.CsvBindByName;
 

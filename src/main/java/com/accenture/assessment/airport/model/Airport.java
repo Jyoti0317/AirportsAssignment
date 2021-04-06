@@ -1,8 +1,10 @@
-package com.accenture.assesment.airport.model;
+package com.accenture.assessment.airport.model;
 
 import com.opencsv.bean.CsvBindByName;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Airport")
@@ -41,11 +43,11 @@ public class Airport {
     private String continent;
 
     @CsvBindByName(column = "iso_country")
-    @Column(name = "isoCountry")
+    @Column(name = "iso_country")
     private String isoCountry;
 
     @CsvBindByName(column = "iso_region")
-    @Column(name = "isoRegion")
+    @Column(name = "iso_region")
     private String isoRegion;
 
     @CsvBindByName
@@ -57,7 +59,7 @@ public class Airport {
     private String scheduledService;
 
     @CsvBindByName(column = "gps_code")
-    @Column(name = "gpsCode")
+    @Column(name = "gps_code")
     private String gpsCode;
 
     @CsvBindByName(column = "iata_code")
@@ -69,7 +71,7 @@ public class Airport {
     private String localCode;
 
     @CsvBindByName(column = "home_link")
-    @Column(name = "homeLink",length = 500)
+    @Column(name = "homeLink", length = 500)
     private String homeLink;
 
     @CsvBindByName(column = "wikipedia_link")
@@ -79,6 +81,10 @@ public class Airport {
     @CsvBindByName(column = "keywords")
     @Column(name = "keywords", length = 500)
     private String keywords;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "airport_ref")
+    private List<Runway> runways = new ArrayList<>();
 
     public Long getId() {
         return id;
@@ -222,6 +228,14 @@ public class Airport {
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
+    }
+
+    public List<Runway> getRunways() {
+        return runways;
+    }
+
+    public void setRunways(List<Runway> runways) {
+        this.runways = runways;
     }
 
     @Override
