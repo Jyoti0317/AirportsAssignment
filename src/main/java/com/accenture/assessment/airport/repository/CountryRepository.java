@@ -11,10 +11,12 @@ import java.util.List;
 @Repository
 public interface CountryRepository extends JpaRepository<Country, Long> {
 
-    @Query(value = "SELECT c FROM Country c JOIN Airport a ON c.code = a.isoCountry\n" +
-            "    GROUP BY c.code, c.id, c.continent, c.keywords, c.name, c.wikipediaLink ORDER BY COUNT(a.id) DESC")
+    @Query(value = "SELECT c, COUNT(a.id) as airportCount FROM Country c JOIN Airport a ON c.code = a.isoCountry\n" +
+            "    GROUP BY c.code ORDER BY airportCount DESC")
     List<Country> findTopCountriesWithHighestNoOfAirports(Pageable page);
 
-    List<Country> findByNameStartsWithIgnoreCaseOrCodeStartsWithIgnoreCase(String name, String code);
+    List<Country> findByCodeContainsIgnoreCase(String countryCode);
+
+    List<Country> findByNameContainsIgnoreCaseOrKeywordsContainsIgnoreCase(String countryName, String countryKeyword);
 
 }

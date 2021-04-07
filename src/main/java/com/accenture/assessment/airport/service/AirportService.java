@@ -1,13 +1,13 @@
 package com.accenture.assessment.airport.service;
 
-import com.accenture.assessment.airport.dto.CountryDto;
-import com.accenture.assessment.airport.dto.RunwayDto;
+import com.accenture.assessment.airport.dto.CountryResponseDto;
+import com.accenture.assessment.airport.dto.RunwayResponseDto;
 
 import java.util.List;
 
 public interface AirportService {
 
-    List<RunwayDto> getRunways(String country);
+    List<RunwayResponseDto> getRunways(String country);
 
-    List<CountryDto> getTopCountriesWithHighestNoOfAirports(int count);
+    List<CountryResponseDto> getTopCountriesWithHighestNoOfAirports(int count);
 }

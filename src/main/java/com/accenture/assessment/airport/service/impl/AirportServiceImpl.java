@@ -1,7 +1,12 @@
 package com.accenture.assessment.airport.service.impl;
 
-import com.accenture.assessment.airport.dto.CountryDto;
+import com.accenture.assessment.airport.dto.AirportResponseDto;
+import com.accenture.assessment.airport.dto.CountryResponseDto;
 import com.accenture.assessment.airport.dto.RunwayDto;
+import com.accenture.assessment.airport.dto.RunwayResponseDto;
+import com.accenture.assessment.airport.exception.ElementNotFoundException;
+import com.accenture.assessment.airport.exception.BadRequestException;
+import com.accenture.assessment.airport.model.Airport;
 import com.accenture.assessment.airport.model.Country;
 import com.accenture.assessment.airport.model.Runway;
 import com.accenture.assessment.airport.repository.CountryRepository;
@@ -14,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,27 +36,51 @@ public class AirportServiceImpl implements AirportService {
     private ModelMapper modelMapper;
 
     @Override
-    public List<RunwayDto> getRunways(String countryName) {
-        List<Country> countries = countryRepository.findByNameStartsWithIgnoreCaseOrCodeStartsWithIgnoreCase(countryName, countryName);
-        Country country = countries.get(0);
-        logger.info("country " + country);
-        List<Runway> runways = new ArrayList<>();
-        List<RunwayDto> runwayDtos = new ArrayList<>();
-        country.getAirports().forEach(a -> runways.addAll(a.getRunways()));
-        runwayDtos = runways.stream().map(this::convertToDto).collect(Collectors.toList());
-        logger.info("runways size " + runwayDtos.size());
-        return runwayDtos;
+    public List<RunwayResponseDto> getRunways(String countryName) {
+        List<Country> countries;
+        if (countryName.length() == 1) {
+            logger.error("Invalid country name or code " + countryName);
+            throw new BadRequestException("Invalid country name or code");
+        } else if (countryName.length() == 2) {
+            countries = countryRepository.findByCodeContainsIgnoreCase(countryName);
+        } else {
+            countries = countryRepository.findByNameContainsIgnoreCaseOrKeywordsContainsIgnoreCase(countryName, countryName);
+        }
+
+
+        if (countries == null || countries.isEmpty()) {
+            logger.info("No country found with given name or code " + countryName);
+            throw new ElementNotFoundException("Country with name " + countryName + " not found");
+        }
+        List<RunwayResponseDto> runwayResponse = countries.stream().map(this::createRunwayResponse).collect(Collectors.toList());
+        logger.info("Returning Runway information ");
+        return runwayResponse;
     }
 
     @Override
-    public List<CountryDto> getTopCountriesWithHighestNoOfAirports(int count) {
+    public List<CountryResponseDto> getTopCountriesWithHighestNoOfAirports(int count) {
         logger.debug("Finding top " + count + " countries from database.");
         List<Country> countries = countryRepository.findTopCountriesWithHighestNoOfAirports(PageRequest.of(0, count));
         logger.debug("Country list got from database with size " + countries != null ? countries.size() : 0);
+        List<CountryResponseDto> countryResponseDtos = countries.stream().map(this::convertToDto).collect(Collectors.toList());
 
-        List<CountryDto> countryDtos = countries.stream().map(this::convertToDto).collect(Collectors.toList());
+        return countryResponseDtos;
+    }
 
-        return countryDtos;
+    private RunwayResponseDto createRunwayResponse(Country country) {
+        RunwayResponseDto runwayResponseDto = new RunwayResponseDto();
+        runwayResponseDto.setCountryName(country.getName());
+        runwayResponseDto.setCountryCode(country.getCode());
+        List<AirportResponseDto> airportResponseDtos = country.getAirports().stream().map(this::createAirportResponseDto).collect(Collectors.toList());
+        runwayResponseDto.setAirportResponseDtos(airportResponseDtos);
+        return runwayResponseDto;
+    }
+
+    private AirportResponseDto createAirportResponseDto(Airport airport) {
+        AirportResponseDto airportResponseDto = new AirportResponseDto();
+        airportResponseDto.setAirportName(airport.getName());
+        airportResponseDto.setRunways(airport.getRunways().stream().map(this::convertToDto).collect(Collectors.toList()));
+        return airportResponseDto;
     }
 
     private RunwayDto convertToDto(Runway runway) {
@@ -60,9 +88,13 @@ public class AirportServiceImpl implements AirportService {
         return runwayDto;
     }
 
-    private CountryDto convertToDto(Country country) {
-        CountryDto countryDto = modelMapper.map(country, CountryDto.class);
-        return countryDto;
+    private CountryResponseDto convertToDto(Country country) {
+        CountryResponseDto countryResponseDto = modelMapper.map(country, CountryResponseDto.class);
+        countryResponseDto.setAirportCount(country.getAirports().size());
+        return countryResponseDto;
     }
 
+    public void setCountryRepository(CountryRepository countryRepository) {
+        this.countryRepository = countryRepository;
+    }
 }

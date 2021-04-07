@@ -7,6 +7,8 @@ import com.accenture.assessment.airport.repository.AirportRepository;
 import com.accenture.assessment.airport.repository.CountryRepository;
 import com.accenture.assessment.airport.repository.RunwayRepository;
 import com.opencsv.bean.CsvToBeanBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +24,7 @@ import java.util.List;
 @Component
 public class UtilityService {
 
+    private static final Logger logger = LogManager.getLogger(UtilityService.class);
 
     @Autowired
     private AirportRepository airportRepository;
@@ -42,6 +45,7 @@ public class UtilityService {
 
     @PostConstruct
     public void populateCSVToDatabase() throws FileNotFoundException, URISyntaxException {
+        logger.info("Loading csv files to database initiated");
 
         List<Country> countries = new CsvToBeanBuilder(new FileReader(getFile("countries.csv")))
                 .withType(Country.class)
@@ -75,6 +79,7 @@ public class UtilityService {
         }
 
 
+        logger.info("Loading of csv files data to database is completed");
     }
 
 }
