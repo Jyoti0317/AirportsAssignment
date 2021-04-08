@@ -2,6 +2,7 @@ package com.accenture.assessment.airport.controller;
 
 import com.accenture.assessment.airport.dto.CountryResponseDto;
 import com.accenture.assessment.airport.dto.RunwayResponseDto;
+import com.accenture.assessment.airport.exception.ElementNotFoundException;
 import com.accenture.assessment.airport.service.AirportService;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -34,20 +35,19 @@ public class AirportController {
     return new ResponseEntity<>(runways, HttpStatus.OK);
   }
 
-  @GetMapping(path = "/topcountries")
+  @GetMapping(path = "/countries/top")
   public ResponseEntity<List<CountryResponseDto>> getTopCountriesWithHighestNoOfAirports()
       throws Exception {
     logger.info("Request received to find top countries with highest airports");
-    try {
-      List<CountryResponseDto> countries = airportService
-          .getTopCountriesWithHighestNoOfAirports(NO_OF_COUNTRIES);
-      return new ResponseEntity<>(countries, HttpStatus.OK);
-    } catch (Exception ex) {
-      logger.error("Error occurred in getting countries with highest airport");
-      ex.printStackTrace();
-      throw new Exception("Error occurred in getting countries with highest airports");
-
+    List<CountryResponseDto> countries = airportService
+        .getTopCountriesWithHighestNoOfAirports(NO_OF_COUNTRIES);
+    if (countries.isEmpty()) {
+      logger.error("No data available in the database");
+      throw new ElementNotFoundException("No data available in database");
     }
+
+    return new ResponseEntity<>(countries, HttpStatus.OK);
+
   }
 
   public void setAirportService(AirportService airportService) {

@@ -61,7 +61,7 @@ public class AirportControllerTest {
     List<CountryResponseDto> countries = new ArrayList<>();
     countries.add(new CountryResponseDto());
     when(airportService.getTopCountriesWithHighestNoOfAirports(anyInt())).thenReturn(countries);
-    RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/airport/topcountries");
+    RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/airport/countries/top");
     MockHttpServletResponse response = mockMvc.perform(requestBuilder).andReturn().getResponse();
     Assertions.assertEquals(200, response.getStatus());
   }
