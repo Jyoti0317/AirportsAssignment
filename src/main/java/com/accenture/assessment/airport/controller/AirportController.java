@@ -28,8 +28,9 @@ public class AirportController {
 
   @GetMapping(path = "/runways")
   public ResponseEntity<List<RunwayResponseDto>> getRunways(@RequestParam String countryName) {
-    logger.info("Request initiated to get runways for country  " + countryName);
+    logger.debug("Request initiated to get runways for country  " + countryName);
     List<RunwayResponseDto> runways = airportService.getRunways(countryName);
+    logger.debug("Returning Runway records ");
     return new ResponseEntity<>(runways, HttpStatus.OK);
   }
 

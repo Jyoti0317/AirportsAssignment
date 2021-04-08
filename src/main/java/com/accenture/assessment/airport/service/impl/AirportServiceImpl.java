@@ -41,8 +41,10 @@ public class AirportServiceImpl implements AirportService {
       logger.error("Invalid country name or code " + countryName);
       throw new BadRequestException("Invalid country name or code");
     } else if (countryName.length() == 2) {
+      logger.debug("Finding country by country code");
       countries = countryRepository.findByCodeContainsIgnoreCase(countryName);
     } else {
+      logger.debug("Finding country by country name or keywords");
       countries = countryRepository
           .findByNameContainsIgnoreCaseOrKeywordsContainsIgnoreCase(countryName, countryName);
     }
@@ -53,7 +55,7 @@ public class AirportServiceImpl implements AirportService {
     }
     List<RunwayResponseDto> runwayResponse = countries.stream().map(this::createRunwayResponse)
         .collect(Collectors.toList());
-    logger.debug("Returning Runway information from service");
+    logger.debug("Total countries found "+ runwayResponse.size());
     return runwayResponse;
   }
 
