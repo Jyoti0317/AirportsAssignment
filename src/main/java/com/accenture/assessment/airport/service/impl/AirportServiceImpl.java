@@ -4,7 +4,6 @@ import com.accenture.assessment.airport.dto.AirportResponseDto;
 import com.accenture.assessment.airport.dto.CountryResponseDto;
 import com.accenture.assessment.airport.dto.RunwayDto;
 import com.accenture.assessment.airport.dto.RunwayResponseDto;
-import com.accenture.assessment.airport.exception.BadRequestException;
 import com.accenture.assessment.airport.exception.ElementNotFoundException;
 import com.accenture.assessment.airport.model.Airport;
 import com.accenture.assessment.airport.model.Country;
@@ -37,10 +36,7 @@ public class AirportServiceImpl implements AirportService {
   @Override
   public List<RunwayResponseDto> getRunways(String countryName) {
     List<Country> countries;
-    if (countryName.length() == 1) {
-      logger.error("Invalid country name or code " + countryName);
-      throw new BadRequestException("Invalid country name or code");
-    } else if (countryName.length() == 2) {
+    if (countryName.length() == 2) {
       logger.debug("Finding country by country code");
       countries = countryRepository.findByCodeContainsIgnoreCase(countryName);
     } else {
@@ -55,7 +51,7 @@ public class AirportServiceImpl implements AirportService {
     }
     List<RunwayResponseDto> runwayResponse = countries.stream().map(this::createRunwayResponse)
         .collect(Collectors.toList());
-    logger.debug("Total countries found "+ runwayResponse.size());
+    logger.debug("Total countries found " + runwayResponse.size());
     return runwayResponse;
   }
 
@@ -65,7 +61,7 @@ public class AirportServiceImpl implements AirportService {
     List<Country> countries = countryRepository
         .findTopCountriesWithHighestNoOfAirports(PageRequest.of(0, count));
     logger.debug(
-        "Country list got from database with size " +  countries.size());
+        "Country list got from database with size " + countries.size());
     return countries.stream().map(this::convertToDto)
         .collect(Collectors.toList());
   }

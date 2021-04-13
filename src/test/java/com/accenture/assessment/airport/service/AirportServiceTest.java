@@ -2,7 +2,6 @@ package com.accenture.assessment.airport.service;
 
 import com.accenture.assessment.airport.dto.CountryResponseDto;
 import com.accenture.assessment.airport.dto.RunwayResponseDto;
-import com.accenture.assessment.airport.exception.BadRequestException;
 import com.accenture.assessment.airport.exception.ElementNotFoundException;
 import com.accenture.assessment.airport.model.Airport;
 import com.accenture.assessment.airport.model.Country;
@@ -66,15 +65,6 @@ public class AirportServiceTest {
     Assertions.assertEquals(2, countryResponseDtos.get(0).getAirportCount());
   }
 
-  @Test
-  public void testGetRunwaysBadRequestException() {
-    try {
-      airportService.getRunways("N");
-    } catch (BadRequestException ex) {
-      Assertions.assertTrue(ex.getMessage().contains("Invalid country name"));
-    }
-
-  }
 
   @Test
   public void testGetRunwaysElementNotFoundException() {
